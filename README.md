@@ -5,10 +5,10 @@ Repo for the Formal Languages labs
 
 input.txt format:
 
-nr. of states,
-terminal symbols
-transitions
-final states
+nr. of states,  
+terminal symbols  
+transitions  
+final states  
 
 Example:
 
