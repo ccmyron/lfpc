@@ -1,73 +1,99 @@
 import pandas as pd
+import re
 
-nfa = {}
+if __name__ == "__main__":
 
-# TODO add parsing from a file
-# with open("input.txt", "r") as inputFile:
+    nfa = {}
 
-states = int(input("Nr of states : "))
-terminals = int(input("Nr of terminals : "))  #
-for i in range(states):
-    state = input("state name : ")
-    nfa[state] = {}
-    for j in range(terminals):
-        path = input("path : ")
-        print("Enter destination state from state {} through path {} : ".format(state, path))
-        reachingState = [x for x in input().split()]
-        nfa[state][path] = reachingState
+    with open("input.txt", "r") as inputFile:
+        lines = inputFile.readlines()
+    inputFile.close()
 
-print("NFA:")
-print(nfa)
-print("NFA table:")
-nfa_table = pd.DataFrame(nfa)
-print(nfa_table.transpose())
+    entries = len(lines)
 
-print("\nF= ")
-nfaFinalState = [x for x in input().split()]
+    # parse all the states
+    states = int(lines[0].rstrip(',\n'))
 
-newStatesList = []
-dfa = {}
-keysList = list(list(nfa.keys())[0])
-pathList = list(nfa[keysList[0]].keys())
+    # parse a list with all the paths
+    terminalsLine = lines[1]
+    terminalsLine = filter(lambda c: c not in " ,\n", terminalsLine)
+    terminalList = [x for x in terminalsLine]
 
-dfa[keysList[0]] = {}
-for i in range(terminals):
-    var = "".join(nfa[keysList[0]][pathList[i]])
-    dfa[keysList[0]][pathList[i]] = var
-    if var not in keysList:
-        newStatesList.append(var)
-        keysList.append(var)
+    i = 2
+    while i < entries-1:
 
-while len(newStatesList) != 0:
+        fileLine = lines[i].split('=')
 
-    dfa[newStatesList[0]] = {}
+        state = "".join(fileLine[0]).split(',')[0]
 
-    for _ in range(len(newStatesList[0])):
-        for i in range(len(pathList)):
-            temp = []
-            for j in range(len(newStatesList[0])):
-                temp += nfa[newStatesList[0][j]][pathList[i]]
-            s = ""
-            s = s.join(temp)
-            if s not in keysList:
-                newStatesList.append(s)
-                keysList.append(s)
-            dfa[newStatesList[0]][pathList[i]] = s
+        # initialize empty list for each path
+        if state not in nfa:  
+            nfa[state] = {x: [] for x in terminalList}
 
-    newStatesList.remove(newStatesList[0])
+        # parse the terminal symbol
+        path = fileLine[0][-1]  
 
-print("\nDFA:")
-print(dfa)
-print("DFA table :")
-dfaTable = pd.DataFrame(dfa)
-print(dfaTable.transpose())
+        # parse the state we reach through this path
+        reachingState = fileLine[1][0]  
+        if reachingState not in nfa[state][path]:
+            nfa[state][path].append(reachingState)
 
-dfaStatesList = list(dfa.keys())
-dfaFinalStates = []
-for x in dfaStatesList:
-    for i in x:
-        if i in nfaFinalState:
-            dfaFinalStates.append(x)
-            break
+        i += 1
 
-print("Final states of the DFA are : ", dfaFinalStates)
+    # parse the final states
+    finalStatesLine = lines[entries-1]
+    nfaFinalStatesList = re.search(r"{(.*)}", finalStatesLine).group(1).split(',')
+
+    print("\nNFA table:")
+    nfa_table = pd.DataFrame(nfa)
+    print(nfa_table.transpose())
+    
+
+    # write out the first line: state and the states we reach through all paths
+    dfa = {}
+    newStatesList = []
+    keysList = [list(nfa.keys())[0]]
+    dfa[keysList[0]] = {}
+    for i in range(len(terminalList)):
+        tempPath = "".join(nfa[keysList[0]][terminalList[i]])
+        dfa[keysList[0]][terminalList[i]] = tempPath
+        if len(tempPath) > 0 and tempPath not in keysList:
+            newStatesList.append(tempPath)
+            keysList.append(tempPath)
+
+
+    #  if a new state appears, add it to the DFA, and go through the states using all paths
+    # until we find all possible permutations of the states.\
+    while len(newStatesList) != 0:
+
+        dfa[newStatesList[0]] = {}
+
+        for _ in range(len(newStatesList[0])):
+            for i in range(len(terminalList)):
+                temp = []
+                for j in range(len(newStatesList[0])):
+                    temp += nfa[newStatesList[0][j]][terminalList[i]]
+                dfaState = ""
+                dfaState = dfaState.join(temp)
+                if len(dfaState) > 0 and dfaState not in keysList:
+                    newStatesList.append(dfaState)
+                    keysList.append(dfaState)
+                dfa[newStatesList[0]][terminalList[i]] = dfaState
+
+        newStatesList.remove(newStatesList[0])
+
+    print("\nDFA table:")
+    dfaTable = pd.DataFrame(dfa)
+    print(dfaTable.transpose())
+
+
+    # find the final states of the DFA
+    dfaStatesList = list(dfa.keys())
+    dfaFinalStates = []
+    for x in dfaStatesList:
+        for i in x:
+            if i in nfaFinalStatesList:
+                dfaFinalStates.append(x)
+                break
+
+    print("Final states of this DFA are:", dfaFinalStates)
