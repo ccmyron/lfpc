@@ -1,8 +1,8 @@
 # files
 JFLAP7.1.jar
 
-#directories
+# directories
 __pycache__/
 
-#fileformats
+# fileformats
 *.pdf

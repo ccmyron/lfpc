@@ -1,11 +1,9 @@
 # LFPC lab 1 variant 14
 from utilities import *
 
-
 if __name__ == "__main__":
-    
-  
-  grammar = """
+
+    grammar = """
     VN={S, B, D},
     VT={a, b, c, d},
     P={
@@ -17,9 +15,11 @@ if __name__ == "__main__":
     6. D ->aB
     7. D ->b
     }"""
-    
-  while True:
-    word = input("Type in a word to be checked:\n")
-    addToGraph(parseString(grammar))
-    print(checkAutomaton(graph, 'S', word))
-    draw()
+
+    while True:
+        word = input("Type in a word to be checked:\n")
+        addToGraph(parseString(grammar))
+        print(checkAutomaton(graph, 'S', word))
+        draw()
+
+

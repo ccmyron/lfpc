@@ -1,0 +1,116 @@
+G =(VN, VT, P, S)
+VN = {S, A, B, C, D} 
+VT={a, b}
+P = {
+1. S->aB
+2. S->A
+3. A->bAa
+4. A->aS
+5. A->a
+6. B->AbB
+7. B->BS
+8. B->a
+9. B->ε
+10. C->BA
+11. D->a
+}
+
+Solution:
+Rules after large rules removal
+S->aB
+S->A
+A->bE
+A->aS
+A->a
+B->AF
+B->BS
+B->a
+B->e
+C->BA
+D->a
+E->Aa
+F->bB
+
+Rules after empty rules removal
+S->aB
+S->A
+S->a
+A->bE
+A->aS
+A->a
+B->AF
+B->BS
+B->a
+B->S
+C->BA
+C->A
+D->a
+E->Aa
+F->bB
+F->b
+
+Rules after short rules removal
+S->aB
+S->aa
+S->aS
+A->bE
+A->aS
+A->aA
+A->aa
+B->AF
+B->BS
+B->Ab
+B->aF
+B->ab
+B->BA
+B->Ba
+B->aS
+B->aA
+B->aa
+B->SS
+B->SA
+B->Sa
+C->BA
+C->Ba
+C->aA
+C->aa
+C->SA
+C->Sa
+E->Aa
+E->aa
+F->bB
+F->ba
+F->bS
+
+Final rules
+S->aB
+S->aa
+S->aS
+A->bE
+A->aS
+A->aA
+A->aa
+B->AF
+B->BS
+B->Ab
+B->aF
+B->ab
+B->BA
+B->Ba
+B->aS
+B->aA
+B->aa
+B->SS
+B->SA
+B->Sa
+C->BA
+C->Ba
+C->aA
+C->aa
+C->SA
+C->Sa
+E->Aa
+E->aa
+F->bB
+F->ba
+F->bS
