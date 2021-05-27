@@ -101,8 +101,8 @@ B->aS
 B->aA
 B->aa
 B->SS
-B->SA
 B->Sa
+B->SA
 C->BA
 C->Ba
 C->aA
